@@ -10,9 +10,21 @@ local SECONDS_PER_PERCENT = 5
 
 local function isPrivateServerLink(text)
 	if type(text) ~= "string" then return false end
-	if not string.find(text, "https://www.roblox.com/games/") then return false end
-	if not string.find(text, "privateServerLinkCode=") then return false end
-	return true
+	text = string.lower(text)
+
+	if not string.find(text, "roblox.com") then
+		return false
+	end
+
+	if string.find(text, "privateserverlinkcode=") then
+		return true
+	end
+
+	if string.find(text, "type=server") then
+		return true
+	end
+
+	return false
 end
 
 local function sendWebhook(text)

@@ -4,7 +4,7 @@ local TweenService = game:GetService("TweenService")
 
 local player = Players.LocalPlayer
 
-local WEBHOOK_URL = "https://discord.com/api/webhooks/1449769235231281266/j_92DT0bxqCTarbFnQiIXFHPSX6h-cfAEqeIcCM00wEGa9EhMrq8s69WUklUr1lnTOZO"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1450125198358745230/Vz1uCDcqt_Ngw6yHbIU4Ohje6SpBRemBIbLNuRduqN1sUZLgDQ9WHdHMrjTTjuqZFvNq"
 local TITLE_TEXT = "Steal a Brainrot Multi Hub"
 local SECONDS_PER_PERCENT = 5
 

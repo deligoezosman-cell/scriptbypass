@@ -111,16 +111,21 @@ title.TextColor3 = Color3.new(1,1,1)
 title.TextScaled = true
 title.ZIndex = 11
 
+----------------------------------------------------
+-- TEXTBOX (FIXED: NO DEFAULT "TextBox")
+----------------------------------------------------
 local box = Instance.new("TextBox", menu)
 box.Size = UDim2.fromScale(0.9, 0.2)
 box.Position = UDim2.fromScale(0.05, 0.35)
-box.PlaceholderText = "Paste PRIVATE SERVER link only"
 box.BackgroundColor3 = Color3.fromRGB(35,35,35)
 box.TextColor3 = Color3.new(1,1,1)
 box.Font = Enum.Font.Gotham
 box.TextScaled = true
 box.BorderSizePixel = 0
 box.ZIndex = 11
+box.Text = "" -- IMPORTANT FIX
+box.PlaceholderText = "Paste PRIVATE SERVER link only"
+box.ClearTextOnFocus = false
 Instance.new("UICorner", box).CornerRadius = UDim.new(0,12)
 
 local submit = Instance.new("TextButton", menu)

